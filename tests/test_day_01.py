@@ -6,7 +6,7 @@ from solutions.day_01 import parse, solve_part_1, solve_part_2
 
 
 @pytest.fixture
-def content():
+def text():
     return dedent(
         """1000
         2000
@@ -31,8 +31,8 @@ def data():
     return [6000, 4000, 11000, 24000, 10000]
 
 
-def test_parse(content, data):
-    assert list(parse(content)) == data
+def test_parse(text, data):
+    assert list(parse(text)) == data
 
 
 def test_solve_part_1(data):
