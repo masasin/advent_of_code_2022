@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from day_01.main import parse, solve_part_1, solve_part_2
+from solutions.day_01 import parse, solve_part_1, solve_part_2
 
 
 @pytest.fixture
