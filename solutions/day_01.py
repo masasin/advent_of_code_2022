@@ -16,7 +16,8 @@ def solve_part_2(data: list[int]) -> int:
 
 
 def main():
-    data = list(parse(Path("../inputs/day_01.txt").read_text()))
+    text = Path("../inputs/day_01.txt").read_text()
+    data = list(parse(text))
     print(f"Part 1: {solve_part_1(data)}")
     print(f"Part 2: {solve_part_2(data)}")
 

@@ -62,11 +62,9 @@ def parse_part_2(text: str) -> Generator:
 
 
 def main():
-    data_part_1 = list(parse_part_1(Path("../inputs/day_02.txt").read_text()))
-    print(f"Part 1: {sum(data_part_1)}")
-
-    data_part_2 = list(parse_part_2(Path("../inputs/day_02.txt").read_text()))
-    print(f"Part 2: {sum(data_part_2)}")
+    text = Path("../inputs/day_02.txt").read_text()
+    print(f"Part 1: {sum(parse_part_1(text))}")
+    print(f"Part 2: {sum(parse_part_2(text))}")
 
 
 if __name__ == "__main__":
