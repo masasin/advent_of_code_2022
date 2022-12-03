@@ -8,7 +8,8 @@ from solutions.day_02 import pair_score, reverse_solve, parse_part_1, parse_part
 @pytest.fixture
 def text():
     return dedent(
-        """A Y
+        """\
+        A Y
         B X
         C Z
         """

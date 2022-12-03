@@ -8,7 +8,8 @@ from solutions.day_01 import parse, solve_part_1, solve_part_2
 @pytest.fixture
 def text():
     return dedent(
-        """1000
+        """\
+        1000
         2000
         3000
 
