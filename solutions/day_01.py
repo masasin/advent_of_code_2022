@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Iterable
 
 
 def parse(text: str) -> Generator[int, None, None]:
@@ -7,11 +7,11 @@ def parse(text: str) -> Generator[int, None, None]:
         yield sum(map(int, elf.splitlines()))
 
 
-def solve_part_1(data: list[int]) -> int:
+def solve_part_1(data: Iterable[int]) -> int:
     return max(data)
 
 
-def solve_part_2(data: list[int]) -> int:
+def solve_part_2(data: Iterable[int]) -> int:
     return sum(sorted(data)[-3:])
 
 

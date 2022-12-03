@@ -42,7 +42,7 @@ def pair_score(opponent: str, player: str) -> int:
     return TOTAL_SCORES[player_index, opponent_index]
 
 
-def parse_part_1(text: str) -> Generator:
+def parse_part_1(text: str) -> Generator[int, None, None]:
     for line in text.splitlines():
         opponent, player = line.split()
         yield pair_score(opponent, MOVE[COMPLEMENT.index(player)])
@@ -54,7 +54,7 @@ def reverse_solve(opponent: str, outcome: str) -> str:
     return MOVE[REVERSE[opponent_index, outcome_index]]
 
 
-def parse_part_2(text: str) -> Generator:
+def parse_part_2(text: str) -> Generator[int, None, None]:
     for line in text.splitlines():
         opponent, outcome = line.split()
         player = reverse_solve(opponent, outcome)
