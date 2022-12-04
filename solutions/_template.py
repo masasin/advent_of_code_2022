@@ -6,11 +6,11 @@ def parse_part_1(text: str) -> Generator:
     ...
 
 
-def parse_part_2(text: str) -> Generator:
+def solve_part_1(data: Iterable):
     ...
 
 
-def solve_part_1(data: Iterable):
+def parse_part_2(text: str) -> Generator:
     ...
 
 
