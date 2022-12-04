@@ -7,8 +7,9 @@ from solutions.day_04 import (
     parse_line,
     ranges_overlap,
     ranges_completely_overlap,
-    parse_part_1,
-    parse_part_2,
+    parse,
+    solve_part_1,
+    solve_part_2,
 )
 
 
@@ -27,13 +28,15 @@ def text():
 
 
 @pytest.fixture
-def data_part_1():
-    return [False, False, False, True, True, False]
-
-
-@pytest.fixture
-def data_part_2():
-    return [False, False, True, True, True, True]
+def data():
+    return [
+        (Range(2, 4), Range(6, 8)),
+        (Range(2, 3), Range(4, 5)),
+        (Range(5, 7), Range(7, 9)),
+        (Range(2, 8), Range(3, 7)),
+        (Range(6, 6), Range(4, 6)),
+        (Range(2, 6), Range(4, 8)),
+    ]
 
 
 @pytest.mark.parametrize(
@@ -81,9 +84,13 @@ def test_ranges_completely_overlap(left, right, overlap):
     assert ranges_completely_overlap(left, right) == overlap
 
 
-def test_parse_part_1(text, data_part_1):
-    assert list(parse_part_1(text)) == data_part_1
+def test_parse(text, data):
+    assert list(parse(text)) == data
 
 
-def test_parse_part_2(text, data_part_2):
-    assert list(parse_part_2(text)) == data_part_2
+def test_solve_part_1(data):
+    assert solve_part_1(data) == 2
+
+
+def test_solve_part_2(data):
+    assert solve_part_2(data) == 4

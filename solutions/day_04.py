@@ -28,20 +28,23 @@ def ranges_completely_overlap(left: Range, right: Range) -> bool:
     return _right_in_left(left, right) or _right_in_left(right, left)
 
 
-def parse_part_1(text: str) -> Generator[bool, None, None]:
-    yield from (
-        ranges_completely_overlap(*parse_line(line)) for line in text.splitlines()
-    )
+def parse(text: str) -> Generator[tuple[Range, Range], None, None]:
+    yield from (parse_line(line) for line in text.splitlines())
 
 
-def parse_part_2(text: str) -> Generator[bool, None, None]:
-    yield from (ranges_overlap(*parse_line(line)) for line in text.splitlines())
+def solve_part_1(ranges: Iterable[tuple[Range, Range]]) -> int:
+    return sum(ranges_completely_overlap(left, right) for left, right in ranges)
+
+
+def solve_part_2(ranges: Iterable[tuple[Range, Range]]) -> int:
+    return sum(ranges_overlap(left, right) for left, right in ranges)
 
 
 def main():
     text = Path("../inputs/day_04.txt").read_text()
-    print(f"Part 1: {sum(parse_part_1(text))}")
-    print(f"Part 2: {sum(parse_part_2(text))}")
+    ranges = list(parse(text))
+    print(f"Part 1: {solve_part_1(ranges)}")
+    print(f"Part 2: {solve_part_2(ranges)}")
 
 
 if __name__ == "__main__":
