@@ -51,9 +51,11 @@ def apply_move_part_1(config: Configuration, move: Move) -> Configuration:
 
 def apply_move_part_2(config: Configuration, move: Move) -> Configuration:
     config = deepcopy(config)
-    boxes = config[move.start - 1][-move.amount :]
-    config[move.start - 1] = config[move.start - 1][: -move.amount]
-    config[move.end - 1].extend(boxes)
+    start = move.start - 1
+    end = move.end - 1
+    boxes = config[start][-move.amount :]
+    config[start] = config[start][: -move.amount]
+    config[end].extend(boxes)
     return config
 
 
