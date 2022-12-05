@@ -7,9 +7,11 @@ from solutions.day_05 import (
     parse_start_config,
     parse_instructions,
     parse,
-    apply_move,
+    apply_move_part_1,
     top_of_stacks,
     solve_part_1,
+    apply_move_part_2,
+    solve_part_2,
 )
 
 
@@ -92,8 +94,19 @@ def test_parse(text, start_config, instructions):
         (Move(2, 2, 1), [["Z", "N", "D", "C"], ["M"], ["P"]]),
     ],
 )
-def test_apply_move(start_config, move, result):
-    assert apply_move(start_config, move) == result
+def test_apply_move_part_1(start_config, move, result):
+    assert apply_move_part_1(start_config, move) == result
+
+
+@pytest.mark.parametrize(
+    ["move", "result"],
+    [
+        (Move(1, 2, 1), [["Z", "N", "D"], ["M", "C"], ["P"]]),
+        (Move(2, 2, 1), [["Z", "N", "C", "D"], ["M"], ["P"]]),
+    ],
+)
+def test_apply_move_part_2(start_config, move, result):
+    assert apply_move_part_2(start_config, move) == result
 
 
 def test_top_of_stacks(start_config):
@@ -102,3 +115,7 @@ def test_top_of_stacks(start_config):
 
 def test_solve_part_1(start_config, instructions):
     assert solve_part_1(start_config, instructions) == "CMZ"
+
+
+def test_solve_part_2(start_config, instructions):
+    assert solve_part_2(start_config, instructions) == "MCD"

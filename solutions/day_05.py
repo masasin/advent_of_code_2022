@@ -42,10 +42,18 @@ def parse(text: str) -> tuple[Configuration, list[Move]]:
     return start_config, instructions
 
 
-def apply_move(config: Configuration, move: Move) -> Configuration:
+def apply_move_part_1(config: Configuration, move: Move) -> Configuration:
     config = deepcopy(config)
     for _ in range(move.amount):
         config[move.end - 1].append(config[move.start - 1].pop())
+    return config
+
+
+def apply_move_part_2(config: Configuration, move: Move) -> Configuration:
+    config = deepcopy(config)
+    boxes = config[move.start - 1][-move.amount :]
+    config[move.start - 1] = config[move.start - 1][: -move.amount]
+    config[move.end - 1].extend(boxes)
     return config
 
 
@@ -55,12 +63,14 @@ def top_of_stacks(config: Configuration) -> str:
 
 def solve_part_1(config: Configuration, instructions: Iterable[Move]) -> str:
     for move in instructions:
-        config = apply_move(config, move)
+        config = apply_move_part_1(config, move)
     return top_of_stacks(config)
 
 
 def solve_part_2(config: Configuration, instructions: Iterable[Move]) -> str:
-    ...
+    for move in instructions:
+        config = apply_move_part_2(config, move)
+    return top_of_stacks(config)
 
 
 def main():
