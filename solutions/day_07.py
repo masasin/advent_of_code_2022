@@ -1,6 +1,8 @@
 import functools as ft
+import itertools as it
 import operator as op
 from pathlib import Path
+import pprint as pp
 from typing import Generator, Union
 
 
@@ -27,7 +29,9 @@ def dir_size(path: Path, tree: Tree) -> int:
 
 
 def get_dirs(tree: Tree) -> set[Path]:
-    return set(file.parent for file, size in walk_dir("/", tree))
+    return set(
+        it.chain.from_iterable(file.parents for file, size in walk_dir("/", tree))
+    )
 
 
 def dirs_smaller_than(

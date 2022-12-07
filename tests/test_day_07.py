@@ -82,6 +82,22 @@ def test_get_dirs(data):
     assert get_dirs(data) == {Path("/"), Path("/a"), Path("/a/e"), Path("/d")}
 
 
+def test_get_dirs_can_handle_dirs_with_only_subdirs(data):
+    data["/"]["l"] = {
+        "m": {"n": 100, "o": 1000},
+        "p": {"q": 200, "r": 2000, "s": 20_000},
+    }
+    assert get_dirs(data) == {
+        Path("/"),
+        Path("/a"),
+        Path("/a/e"),
+        Path("/d"),
+        Path("/l"),
+        Path("/l/m"),
+        Path("/l/p"),
+    }
+
+
 @pytest.mark.parametrize(
     ["folder", "size"],
     [
