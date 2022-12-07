@@ -2,7 +2,6 @@ import functools as ft
 import itertools as it
 import operator as op
 from pathlib import Path
-import pprint as pp
 from typing import Generator, Union
 
 
@@ -13,8 +12,7 @@ def _node(path: Path, tree: Tree) -> Tree | int:
     return ft.reduce(op.getitem, path.parts, tree)  # noqa
 
 
-def walk_dir(path: Path | str, tree: Tree) -> Generator[tuple[Path, int], None, None]:
-    path = Path(path)
+def walk_dir(path: Path, tree: Tree) -> Generator[tuple[Path, int], None, None]:
     value = _node(path, tree)
     match value:
         case dict():
@@ -30,7 +28,7 @@ def dir_size(path: Path, tree: Tree) -> int:
 
 def get_dirs(tree: Tree) -> set[Path]:
     return set(
-        it.chain.from_iterable(file.parents for file, size in walk_dir("/", tree))
+        it.chain.from_iterable(file.parents for file, size in walk_dir(Path("/"), tree))
     )
 
 
@@ -39,6 +37,14 @@ def dirs_smaller_than(
 ) -> Generator[tuple[Path, int], None, None]:
     for dir_ in get_dirs(tree):
         if (size := dir_size(dir_, tree)) <= max_size:
+            yield dir_, size
+
+
+def dirs_larger_than(
+    min_size: int, tree: Tree
+) -> Generator[tuple[Path, int], None, None]:
+    for dir_ in get_dirs(tree):
+        if (size := dir_size(dir_, tree)) >= min_size:
             yield dir_, size
 
 
@@ -73,7 +79,12 @@ def solve_part_1(data: Tree) -> int:
 
 
 def solve_part_2(data: Tree) -> int:
-    ...
+    total = 70_000_000
+    upgrade = 30_000_000
+    max_allowed = total - upgrade
+    used = dir_size(Path("/"), data)
+    to_remove = used - max_allowed
+    return min(size for dir_, size in dirs_larger_than(to_remove, data))
 
 
 def main():

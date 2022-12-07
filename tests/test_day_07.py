@@ -11,6 +11,7 @@ from solutions.day_07 import (
     walk_dir,
     get_dirs,
     move_dir,
+    solve_part_2,
 )
 
 
@@ -139,3 +140,7 @@ def test_parse(text, data):
 
 def test_solve_part_1(data):
     assert solve_part_1(data) == 95_437
+
+
+def test_solve_part_2(data):
+    assert solve_part_2(data) == 24_933_642
