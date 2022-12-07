@@ -95,7 +95,7 @@ def test_dir_size(data, folder, size):
     assert dir_size(folder, data) == size
 
 
-def test_dirs_smaller_than(data, data_part_1):
+def test_dirs_smaller_than(data):
     assert set(dirs_smaller_than(100_000, data)) == {
         (Path("/a/e"), 584),
         (Path("/a"), 94_853),
