@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Generator, Iterable
 
 
 import numpy as np
