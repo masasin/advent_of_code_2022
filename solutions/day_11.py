@@ -1,7 +1,8 @@
+import functools as ft
+import operator as op
 from pathlib import Path
 from typing import Deque, Generator, Iterable
 
-import numpy as np
 from pydantic import BaseModel
 
 
@@ -51,7 +52,7 @@ class Monkey(BaseModel):
 class Sim:
     def __init__(self, *monkeys):
         self.monkeys = monkeys
-        lcm = np.prod([monkey.divisor for monkey in self.monkeys])
+        lcm = ft.reduce(op.mul, (monkey.divisor for monkey in self.monkeys))
         for monkey in self.monkeys:
             monkey.lcm = lcm
         self._n_rounds = 0
