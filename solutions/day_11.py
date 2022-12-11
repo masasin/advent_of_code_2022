@@ -21,7 +21,7 @@ class Item(BaseModel):
     def lower_worry(self, lcm: int = 1):
         if self.part_1:
             self.worry //= 3
-
+        else:
             self.worry %= lcm
 
 
@@ -52,7 +52,6 @@ class Sim:
     def __init__(self, *monkeys):
         self.monkeys = monkeys
         lcm = np.prod([monkey.divisor for monkey in self.monkeys])
-        print(lcm)
         for monkey in self.monkeys:
             monkey.lcm = lcm
         self._n_rounds = 0

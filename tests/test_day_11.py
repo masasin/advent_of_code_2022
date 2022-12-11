@@ -185,9 +185,8 @@ def test_parse_part_2(text, data_part_2):
 @pytest.mark.parametrize(
     ["n_rounds", "expected"],
     [
-        (1, 24),
         (20, 99 * 103),
-        # (1000, 5204 * 5192),
+        (1000, 5204 * 5192),
     ],
 )
 def test_solve_part_2(data_part_2, n_rounds, expected):
