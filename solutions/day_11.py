@@ -52,6 +52,7 @@ class Sim:
     def __init__(self, *monkeys):
         self.monkeys = monkeys
         lcm = np.prod([monkey.divisor for monkey in self.monkeys])
+        print(lcm)
         for monkey in self.monkeys:
             monkey.lcm = lcm
         self._n_rounds = 0
@@ -79,27 +80,14 @@ def _create_monkey(block: str, part_1: bool) -> Monkey:
     )
 
 
-def parse_part_1(text: str) -> Generator[Monkey, None, None]:
+def parse(text: str, part_1: bool) -> Generator[Monkey, None, None]:
     for block in text.split("\n\n"):
-        yield _create_monkey(block, part_1=True)
+        yield _create_monkey(block, part_1=part_1)
 
 
-def solve_part_1(monkeys: Iterable[Monkey]) -> int:
+def solve(monkeys: Iterable[Monkey], n_rounds: int) -> int:
     sim = Sim(*monkeys)
-    for _ in range(20):
-        sim.play_round()
-    *_, second, first = sorted([monkey.n_inspected for monkey in sim.monkeys])
-    return first * second
-
-
-def parse_part_2(text: str) -> Generator[Monkey, None, None]:
-    for block in text.split("\n\n"):
-        yield _create_monkey(block, part_1=False)
-
-
-def solve_part_2(monkeys: Iterable[Monkey]) -> int:
-    sim = Sim(*monkeys)
-    for _ in range(10_000):
+    for _ in range(n_rounds):
         sim.play_round()
     *_, second, first = sorted([monkey.n_inspected for monkey in sim.monkeys])
     return first * second
@@ -107,8 +95,8 @@ def solve_part_2(monkeys: Iterable[Monkey]) -> int:
 
 def main():
     text = Path("../inputs/day_11.txt").read_text()
-    print(f"Part 1: {solve_part_1(parse_part_1(text))}")
-    print(f"Part 2: {solve_part_2(parse_part_2(text))}")
+    print(f"Part 1: {solve(parse(text, part_1=True), n_rounds=20)}")
+    print(f"Part 2: {solve(parse(text, part_1=False), n_rounds=10_000)}")
 
 
 if __name__ == "__main__":

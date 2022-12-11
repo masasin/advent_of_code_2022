@@ -1,16 +1,13 @@
-from collections import deque
 from textwrap import dedent
 
 import pytest
 
 from solutions.day_11 import (
-    Monkey,
-    parse_part_1,
     Item,
+    Monkey,
     Sim,
-    solve_part_1,
-    parse_part_2,
-    solve_part_2,
+    parse,
+    solve,
 )
 
 
@@ -96,7 +93,7 @@ def data_part_1():
 
 
 def test_parse_part_1(text, data_part_1):
-    assert list(parse_part_1(text)) == data_part_1
+    assert list(parse(text, part_1=True)) == data_part_1
 
 
 @pytest.mark.parametrize(
@@ -132,7 +129,7 @@ def test_n_inspected_calculated_correctly(data_part_1):
 
 
 def test_solve_part_1(data_part_1):
-    assert solve_part_1(data_part_1) == 10605
+    assert solve(data_part_1, n_rounds=20) == 10605
 
 
 @pytest.fixture
@@ -182,8 +179,16 @@ def data_part_2():
 
 
 def test_parse_part_2(text, data_part_2):
-    assert list(parse_part_2(text)) == data_part_2
+    assert list(parse(text, part_1=False)) == data_part_2
 
 
-def test_solve_part_2(data_part_2):
-    assert solve_part_2(data_part_2) == 2713310158
+@pytest.mark.parametrize(
+    ["n_rounds", "expected"],
+    [
+        (1, 24),
+        (20, 99 * 103),
+        # (1000, 5204 * 5192),
+    ],
+)
+def test_solve_part_2(data_part_2, n_rounds, expected):
+    assert solve(data_part_2, n_rounds=n_rounds) == expected
