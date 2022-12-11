@@ -1,5 +1,4 @@
-import functools as ft
-import operator as op
+from math import prod
 from pathlib import Path
 from typing import Deque, Generator, Iterable
 
@@ -52,7 +51,7 @@ class Monkey(BaseModel):
 class Sim:
     def __init__(self, *monkeys):
         self.monkeys = monkeys
-        lcm = ft.reduce(op.mul, (monkey.divisor for monkey in self.monkeys))
+        lcm = prod(monkey.divisor for monkey in self.monkeys)
         for monkey in self.monkeys:
             monkey.lcm = lcm
         self._n_rounds = 0
