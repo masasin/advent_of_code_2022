@@ -1,11 +1,13 @@
 from pathlib import Path
 from typing import Deque, Generator, Iterable
 
+import numpy as np
 from pydantic import BaseModel
 
 
 class Item(BaseModel):
     worry: int
+    part_1: bool = True
 
     def apply_operation(self, operation: str):
         match operation.split()[1:]:
@@ -16,6 +18,12 @@ class Item(BaseModel):
             case ["*", number]:
                 self.worry *= int(number)
 
+    def lower_worry(self, lcm: int = 1):
+        if self.part_1:
+            self.worry //= 3
+
+            self.worry %= lcm
+
 
 class Monkey(BaseModel):
     items: Deque[Item]
@@ -24,12 +32,13 @@ class Monkey(BaseModel):
     if_true: int
     if_false: int
     n_inspected: int = 0
+    lcm: int = 1
 
     def inspect_one(self) -> tuple[int, Item]:
         self.n_inspected += 1
         item = self.items.popleft()
         item.apply_operation(self.operation)
-        item.worry //= 3
+        item.lower_worry(self.lcm)
         if item.worry % self.divisor == 0:
             return self.if_true, item
         else:
@@ -42,6 +51,9 @@ class Monkey(BaseModel):
 class Sim:
     def __init__(self, *monkeys):
         self.monkeys = monkeys
+        lcm = np.prod([monkey.divisor for monkey in self.monkeys])
+        for monkey in self.monkeys:
+            monkey.lcm = lcm
         self._n_rounds = 0
 
     def step(self, monkey):
@@ -54,16 +66,22 @@ class Sim:
         self._n_rounds += 1
 
 
+def _create_monkey(block: str, part_1: bool) -> Monkey:
+    _, starting, operation, test, if_true, if_false = block.splitlines()
+    return Monkey(
+        items=[
+            Item(worry=i, part_1=part_1) for i in starting.split(": ")[1].split(", ")
+        ],
+        operation=operation.split(" = ")[1],
+        divisor=test.rsplit(" ")[-1],
+        if_true=if_true.rsplit(" ")[-1],
+        if_false=if_false.rsplit(" ")[-1],
+    )
+
+
 def parse_part_1(text: str) -> Generator[Monkey, None, None]:
     for block in text.split("\n\n"):
-        _, starting, operation, test, if_true, if_false = block.splitlines()
-        yield Monkey(
-            items=[Item(worry=i) for i in starting.split(": ")[1].split(", ")],
-            operation=operation.split(" = ")[1],
-            divisor=test.rsplit(" ")[-1],
-            if_true=if_true.rsplit(" ")[-1],
-            if_false=if_false.rsplit(" ")[-1],
-        )
+        yield _create_monkey(block, part_1=True)
 
 
 def solve_part_1(monkeys: Iterable[Monkey]) -> int:
@@ -74,15 +92,23 @@ def solve_part_1(monkeys: Iterable[Monkey]) -> int:
     return first * second
 
 
-def solve_part_2(data: Iterable[Monkey]) -> int:
-    ...
+def parse_part_2(text: str) -> Generator[Monkey, None, None]:
+    for block in text.split("\n\n"):
+        yield _create_monkey(block, part_1=False)
+
+
+def solve_part_2(monkeys: Iterable[Monkey]) -> int:
+    sim = Sim(*monkeys)
+    for _ in range(10_000):
+        sim.play_round()
+    *_, second, first = sorted([monkey.n_inspected for monkey in sim.monkeys])
+    return first * second
 
 
 def main():
     text = Path("../inputs/day_11.txt").read_text()
-    data = list(parse_part_1(text))
-    print(f"Part 1: {solve_part_1(data)}")
-    print(f"Part 2: {solve_part_2(data)}")
+    print(f"Part 1: {solve_part_1(parse_part_1(text))}")
+    print(f"Part 2: {solve_part_2(parse_part_2(text))}")
 
 
 if __name__ == "__main__":

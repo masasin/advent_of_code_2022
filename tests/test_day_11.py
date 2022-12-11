@@ -3,7 +3,15 @@ from textwrap import dedent
 
 import pytest
 
-from solutions.day_11 import Monkey, parse_part_1, Item, Sim, solve_part_1
+from solutions.day_11 import (
+    Monkey,
+    parse_part_1,
+    Item,
+    Sim,
+    solve_part_1,
+    parse_part_2,
+    solve_part_2,
+)
 
 
 @pytest.fixture
@@ -42,10 +50,13 @@ def text():
 
 
 @pytest.fixture
-def data():
+def data_part_1():
     return [
         Monkey(
-            items=[Item(worry=79), Item(worry=98)],
+            items=[
+                Item(worry=79),
+                Item(worry=98),
+            ],
             operation="old * 19",
             divisor=23,
             if_true=2,
@@ -64,7 +75,11 @@ def data():
             if_false=0,
         ),
         Monkey(
-            items=[Item(worry=79), Item(worry=60), Item(worry=97)],
+            items=[
+                Item(worry=79),
+                Item(worry=60),
+                Item(worry=97),
+            ],
             operation="old * old",
             divisor=13,
             if_true=1,
@@ -80,8 +95,8 @@ def data():
     ]
 
 
-def test_parse_part_1(text, data):
-    assert list(parse_part_1(text)) == data
+def test_parse_part_1(text, data_part_1):
+    assert list(parse_part_1(text)) == data_part_1
 
 
 @pytest.mark.parametrize(
@@ -98,8 +113,8 @@ def test_apply_operation(operation, worry):
     assert item.worry == worry
 
 
-def test_play_round(data):
-    sim = Sim(*data)
+def test_play_round(data_part_1):
+    sim = Sim(*data_part_1)
     sim.play_round()
     assert [[item.worry for item in monkey.items] for monkey in sim.monkeys] == [
         [20, 23, 27, 26],
@@ -109,12 +124,66 @@ def test_play_round(data):
     ]
 
 
-def test_n_inspected_calculated_correctly(data):
-    sim = Sim(*data)
+def test_n_inspected_calculated_correctly(data_part_1):
+    sim = Sim(*data_part_1)
     for _ in range(20):
         sim.play_round()
     assert [monkey.n_inspected for monkey in sim.monkeys] == [101, 95, 7, 105]
 
 
-def test_solve_part_1(data):
-    assert solve_part_1(data) == 10605
+def test_solve_part_1(data_part_1):
+    assert solve_part_1(data_part_1) == 10605
+
+
+@pytest.fixture
+def data_part_2():
+    return [
+        Monkey(
+            items=[
+                Item(worry=79, part_1=False),
+                Item(worry=98, part_1=False),
+            ],
+            operation="old * 19",
+            divisor=23,
+            if_true=2,
+            if_false=3,
+        ),
+        Monkey(
+            items=[
+                Item(worry=54, part_1=False),
+                Item(worry=65, part_1=False),
+                Item(worry=75, part_1=False),
+                Item(worry=74, part_1=False),
+            ],
+            operation="old + 6",
+            divisor=19,
+            if_true=2,
+            if_false=0,
+        ),
+        Monkey(
+            items=[
+                Item(worry=79, part_1=False),
+                Item(worry=60, part_1=False),
+                Item(worry=97, part_1=False),
+            ],
+            operation="old * old",
+            divisor=13,
+            if_true=1,
+            if_false=3,
+        ),
+        Monkey(
+            items=[Item(worry=74, part_1=False)],
+            operation="old + 3",
+            divisor=17,
+            if_true=0,
+            if_false=1,
+        ),
+    ]
+
+
+def test_parse_part_2(text, data_part_2):
+    assert list(parse_part_2(text)) == data_part_2
+
+
+def test_solve_part_2(data_part_2):
+    assert solve_part_2(data_part_2) == 2713310158
