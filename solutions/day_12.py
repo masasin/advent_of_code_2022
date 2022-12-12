@@ -26,7 +26,7 @@ def parse(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
 
 
 def reachable_from(layout: np.ndarray) -> np.ndarray:
-    layout_buffer = np.ones(layout.shape + np.array([2, 2])) * np.inf
+    layout_buffer = np.ones(layout.shape + np.array([2, 2])) * np.nan
     layout_buffer[1:-1, 1:-1] = layout
     diffs = np.array(
         [
@@ -36,7 +36,6 @@ def reachable_from(layout: np.ndarray) -> np.ndarray:
             np.diff(layout_buffer[:, ::-1], axis=1)[1:-1, -2::-1],  # right
         ]
     )
-    diffs[diffs == -np.inf] = np.inf
     return diffs <= 1
 
 
