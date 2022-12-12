@@ -1,11 +1,12 @@
 from pathlib import Path
 from string import ascii_lowercase
-from typing import Iterable
 
 import numpy as np
 
 
-directions = [
+Point = tuple[int, int]
+
+DIRECTIONS = [
     np.array([-1, 0]),
     np.array([1, 0]),
     np.array([0, -1]),
@@ -13,7 +14,7 @@ directions = [
 ]
 
 
-def parse(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
+def parse(text: str) -> tuple[np.ndarray, Point, Point]:
     target = ascii_lowercase + "SE"
     layout = np.array(
         [[target.index(letter) for letter in line] for line in text.splitlines()]
@@ -39,26 +40,26 @@ def reachable_from(layout: np.ndarray) -> np.ndarray:
     return diffs <= 1
 
 
-def distance_from(reachability: np.ndarray, point: Iterable[int]) -> np.ndarray:
+def distance_from(reachability: np.ndarray, point: Point) -> np.ndarray:
     distances = np.ones_like(reachability[0]) * np.inf
     distances[point] = 0
-    points = {tuple(point)}
+    points = {point}
 
     while points:
         point = points.pop()
-        for direction, reachable in zip(directions, reachability[:, *point]):
+        for direction, reachable in zip(DIRECTIONS, reachability[:, *point]):
             if reachable:
-                new_point = point + direction
-                old_distance = distances[*new_point]
-                new_distance = distances[*point] + 1
+                new_point = tuple(point + direction)
+                old_distance = distances[new_point]
+                new_distance = distances[point] + 1
                 if new_distance < old_distance:
-                    points.add(tuple(new_point))
-                distances[*new_point] = min(old_distance, new_distance)
+                    points.add(new_point)
+                distances[new_point] = min(old_distance, new_distance)
 
     return distances
 
 
-def solve_part_1(distances: np.ndarray, start: Iterable[int]) -> int:
+def solve_part_1(distances: np.ndarray, start: Point) -> int:
     return distances[*start]
 
 
