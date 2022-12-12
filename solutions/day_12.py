@@ -1,0 +1,97 @@
+from pathlib import Path
+from string import ascii_lowercase
+from typing import Generator, Iterable
+
+import numpy as np
+
+
+directions = [
+    np.array([-1, 0]),
+    np.array([1, 0]),
+    np.array([0, -1]),
+    np.array([0, 1]),
+]
+
+
+def parse_part_1(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
+    target = ascii_lowercase + "SE"
+    layout = np.array(
+        [[target.index(letter) for letter in line] for line in text.splitlines()]
+    )
+    start = tuple(np.argwhere(layout == 26)[0])
+    end = tuple(np.argwhere(layout == 27)[0])
+    layout[start] = 0
+    layout[end] = 25
+    return layout, start, end
+
+
+def movement_options(layout: np.ndarray) -> np.ndarray:
+    layout_buffer = np.ones(layout.shape + np.array([2, 2])) * 100
+    layout_buffer[1:-1, 1:-1] = layout
+    diffs = np.array(
+        [
+            np.diff(layout_buffer[::-1], axis=0)[-1:0:-1, 1:-1],  # up
+            np.diff(layout_buffer, axis=0)[1:, 1:-1],  # down
+            np.diff(layout_buffer[:, ::-1], axis=1)[1:-1, -1:0:-1],  # left
+            np.diff(layout_buffer, axis=1)[1:-1, 1:],  # right
+        ]
+    )
+    return diffs <= 1
+
+
+def reachable_from(options: np.ndarray) -> np.ndarray:
+    u, d, l, r = options
+    return np.array(
+        [
+            np.roll(d, 1, 0),
+            np.roll(u, -1, 0),
+            np.roll(r, 1, 1),
+            np.roll(l, -1, 1),
+        ]
+    )
+
+
+def distance_from(reachability: np.ndarray, point: Iterable[int]) -> np.ndarray:
+    distances = np.ones_like(reachability[0]) * np.inf
+    distances[point] = 0
+    points = {tuple(point)}
+
+    while points:
+        point = points.pop()
+        for direction, reachable in zip(directions, reachability[:, *point]):
+            if reachable:
+                new_point = point + direction
+                old_distance = distances[*new_point]
+                new_distance = distances[*point] + 1
+                if new_distance < old_distance:
+                    points.add(tuple(new_point))
+                distances[*new_point] = min(old_distance, new_distance)
+
+    return distances
+
+
+def solve_part_1(
+    reachability: np.ndarray, start: Iterable[int], end: Iterable[int]
+) -> int:
+    distances = distance_from(reachability, end)
+    return int(distances[*start])
+
+
+def solve_part_2(
+    layout: np.ndarray, reachability: np.ndarray, end: Iterable[int]
+) -> int:
+    distances = distance_from(reachability, end)
+    return int(distances[layout == 0].min())
+
+
+def main():
+    text = Path("../inputs/day_12.txt").read_text()
+    layout, start, end = parse_part_1(text)
+    options = movement_options(layout)
+    reachability = reachable_from(options)
+    print(f"Part 1: {solve_part_1(reachability, start, end)}")
+    print(f"Part 2: {solve_part_2(layout, reachability, end)}")
+
+
+if __name__ == "__main__":
+    main()
