@@ -26,20 +26,26 @@ def text():
 
 
 @pytest.fixture
-def data():
-    return (
-        np.array(
-            [
-                [0, 0, 1, 16, 15, 14, 13, 12],
-                [0, 1, 2, 17, 24, 23, 23, 11],
-                [0, 2, 2, 18, 25, 25, 23, 10],
-                [0, 2, 2, 19, 20, 21, 22, 9],
-                [0, 1, 3, 4, 5, 6, 7, 8],
-            ]
-        ),
-        (0, 0),
-        (2, 5),
+def layout():
+    return np.array(
+        [
+            [0, 0, 1, 16, 15, 14, 13, 12],
+            [0, 1, 2, 17, 24, 23, 23, 11],
+            [0, 2, 2, 18, 25, 25, 23, 10],
+            [0, 2, 2, 19, 20, 21, 22, 9],
+            [0, 1, 3, 4, 5, 6, 7, 8],
+        ]
     )
+
+
+@pytest.fixture
+def start():
+    return (0, 0)
+
+
+@pytest.fixture
+def end():
+    return (2, 5)
 
 
 @pytest.fixture
@@ -91,8 +97,7 @@ def distances_from_end():
     )
 
 
-def test_reachable_from(data, reachable):
-    layout, start, end = data
+def test_reachable_from(layout, reachable):
     assert (reachable_from(layout) == reachable).all()
 
 
@@ -100,19 +105,16 @@ def test_distance_from(reachable, distances_from_end):
     assert (distance_from(reachable, (2, 5)) == distances_from_end).all()
 
 
-def test_parse(text, data):
-    layout, start, end = data
+def test_parse(text, layout, start, end):
     parsed = parse(text)
     assert (parsed[0] == layout).all()
     assert parsed[1] == start
     assert parsed[2] == end
 
 
-def test_solve_part_1(distances_from_end, data):
-    layout, start, end = data
+def test_solve_part_1(distances_from_end, start):
     assert solve_part_1(distances_from_end, start) == 31
 
 
-def test_solve_part_2(distances_from_end, data):
-    layout, start, end = data
+def test_solve_part_2(distances_from_end, layout):
     assert solve_part_2(layout, distances_from_end) == 29
