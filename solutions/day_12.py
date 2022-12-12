@@ -6,6 +6,7 @@ import numpy as np
 
 Point = tuple[int, int]
 
+HEIGHTS = ascii_lowercase
 DIRECTIONS = [
     np.array([-1, 0]),
     np.array([1, 0]),
@@ -15,14 +16,14 @@ DIRECTIONS = [
 
 
 def parse(text: str) -> tuple[np.ndarray, Point, Point]:
-    target = ascii_lowercase + "SE"
+    target = HEIGHTS + "SE"
     layout = np.array(
         [[target.index(letter) for letter in line] for line in text.splitlines()]
     )
-    start = tuple(np.argwhere(layout == 26)[0])
-    end = tuple(np.argwhere(layout == 27)[0])
+    start = tuple(np.argwhere(layout == target.index("S"))[0])
+    end = tuple(np.argwhere(layout == target.index("E"))[0])
     layout[start] = 0
-    layout[end] = 25
+    layout[end] = len(HEIGHTS) - 1
     return layout, start, end
 
 
