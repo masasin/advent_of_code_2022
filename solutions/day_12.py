@@ -25,30 +25,19 @@ def parse(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
     return layout, start, end
 
 
-def movement_options(layout: np.ndarray) -> np.ndarray:
-    layout_buffer = np.ones(layout.shape + np.array([2, 2])) * 100
+def reachable_from(layout: np.ndarray) -> np.ndarray:
+    layout_buffer = np.ones(layout.shape + np.array([2, 2])) * np.inf
     layout_buffer[1:-1, 1:-1] = layout
     diffs = np.array(
         [
-            np.diff(layout_buffer[::-1], axis=0)[-1:0:-1, 1:-1],  # up
-            np.diff(layout_buffer, axis=0)[1:, 1:-1],  # down
-            np.diff(layout_buffer[:, ::-1], axis=1)[1:-1, -1:0:-1],  # left
-            np.diff(layout_buffer, axis=1)[1:-1, 1:],  # right
+            np.diff(layout_buffer, axis=0)[:-1, 1:-1],  # up
+            np.diff(layout_buffer[::-1], axis=0)[-2::-1, 1:-1],  # down
+            np.diff(layout_buffer, axis=1)[1:-1, :-1],  # left
+            np.diff(layout_buffer[:, ::-1], axis=1)[1:-1, -2::-1],  # right
         ]
     )
+    diffs[diffs == -np.inf] = np.inf
     return diffs <= 1
-
-
-def reachable_from(options: np.ndarray) -> np.ndarray:
-    u, d, l, r = options
-    return np.array(
-        [
-            np.roll(d, 1, 0),
-            np.roll(u, -1, 0),
-            np.roll(r, 1, 1),
-            np.roll(l, -1, 1),
-        ]
-    )
 
 
 def distance_from(reachability: np.ndarray, point: Iterable[int]) -> np.ndarray:
@@ -81,8 +70,7 @@ def solve_part_2(layout: np.ndarray, distances: np.ndarray) -> int:
 def main():
     text = Path("../inputs/day_12.txt").read_text()
     layout, start, end = parse(text)
-    options = movement_options(layout)
-    reachability = reachable_from(options)
+    reachability = reachable_from(layout)
     distances_from_end = distance_from(reachability, end)
     print(f"Part 1: {solve_part_1(distances_from_end, start):.0f}")
     print(f"Part 2: {solve_part_2(layout, distances_from_end):.0f}")

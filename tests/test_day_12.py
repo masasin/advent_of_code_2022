@@ -5,7 +5,6 @@ import pytest
 
 from solutions.day_12 import (
     parse,
-    movement_options,
     reachable_from,
     distance_from,
     solve_part_1,
@@ -40,42 +39,6 @@ def data():
         ),
         (0, 0),
         (2, 5),
-    )
-
-
-@pytest.fixture
-def options():
-    return np.array(
-        [
-            [  # up
-                [False, False, False, False, False, False, False, False],
-                [True, True, True, True, True, True, True, True],
-                [True, True, True, True, True, True, True, True],
-                [True, True, True, True, False, False, True, True],
-                [True, True, True, False, False, False, False, True],
-            ],
-            [  # down
-                [True, True, True, True, False, False, False, True],
-                [True, True, True, True, True, False, True, True],
-                [True, True, True, True, True, True, True, True],
-                [True, True, True, True, True, True, True, True],
-                [False, False, False, False, False, False, False, False],
-            ],
-            [  # left
-                [False, True, True, True, True, True, True, True],
-                [False, True, True, True, True, True, True, False],
-                [False, True, True, True, True, True, False, False],
-                [False, True, True, True, True, True, True, False],
-                [False, True, True, True, True, True, True, True],
-            ],
-            [  # right
-                [True, True, False, True, True, True, True, False],
-                [True, True, False, False, True, True, True, False],
-                [False, True, False, False, True, True, True, False],
-                [False, True, False, True, True, True, True, False],
-                [True, False, True, True, True, True, True, False],
-            ],
-        ]
     )
 
 
@@ -128,12 +91,9 @@ def distances_from_end():
     )
 
 
-def test_movement_options(data, options):
-    assert (movement_options(data[0]) == options).all()
-
-
-def test_reachable_from(options, reachable):
-    assert (reachable_from(options) == reachable).all()
+def test_reachable_from(data, reachable):
+    layout, start, end = data
+    assert (reachable_from(layout) == reachable).all()
 
 
 def test_distance_from(reachable, distances_from_end):
