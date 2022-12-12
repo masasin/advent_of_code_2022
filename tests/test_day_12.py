@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from solutions.day_12 import (
-    parse_part_1,
+    parse,
     movement_options,
     reachable_from,
     distance_from,
@@ -119,14 +119,12 @@ def reachable():
 def distances_from_end():
     return np.array(
         [
-            [
-                [31, 30, 29, 12, 13, 14, 15, 16],
-                [30, 29, 28, 11, 2, 3, 4, 17],
-                [31, 28, 27, 10, 1, 0, 5, 18],
-                [30, 27, 26, 9, 8, 7, 6, 19],
-                [29, 28, 25, 24, 23, 22, 21, 20],
-            ],
-        ]
+            [31, 30, 29, 12, 13, 14, 15, 16],
+            [30, 29, 28, 11, 2, 3, 4, 17],
+            [31, 28, 27, 10, 1, 0, 5, 18],
+            [30, 27, 26, 9, 8, 7, 6, 19],
+            [29, 28, 25, 24, 23, 22, 21, 20],
+        ],
     )
 
 
@@ -142,19 +140,19 @@ def test_distance_from(reachable, distances_from_end):
     assert (distance_from(reachable, (2, 5)) == distances_from_end).all()
 
 
-def test_parse_part_1(text, data):
+def test_parse(text, data):
     layout, start, end = data
-    parsed = parse_part_1(text)
+    parsed = parse(text)
     assert (parsed[0] == layout).all()
     assert parsed[1] == start
     assert parsed[2] == end
 
 
-def test_solve_part_1(reachable, data):
+def test_solve_part_1(distances_from_end, data):
     layout, start, end = data
-    assert solve_part_1(reachable, start, end) == 31
+    assert solve_part_1(distances_from_end, start) == 31
 
 
-def test_solve_part_2(reachable, data):
+def test_solve_part_2(distances_from_end, data):
     layout, start, end = data
-    assert solve_part_2(layout, reachable, end) == 29
+    assert solve_part_2(layout, distances_from_end) == 29

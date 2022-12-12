@@ -1,6 +1,6 @@
 from pathlib import Path
 from string import ascii_lowercase
-from typing import Generator, Iterable
+from typing import Iterable
 
 import numpy as np
 
@@ -13,7 +13,7 @@ directions = [
 ]
 
 
-def parse_part_1(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
+def parse(text: str) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
     target = ascii_lowercase + "SE"
     layout = np.array(
         [[target.index(letter) for letter in line] for line in text.splitlines()]
@@ -70,27 +70,22 @@ def distance_from(reachability: np.ndarray, point: Iterable[int]) -> np.ndarray:
     return distances
 
 
-def solve_part_1(
-    reachability: np.ndarray, start: Iterable[int], end: Iterable[int]
-) -> int:
-    distances = distance_from(reachability, end)
-    return int(distances[*start])
+def solve_part_1(distances: np.ndarray, start: Iterable[int]) -> int:
+    return distances[*start]
 
 
-def solve_part_2(
-    layout: np.ndarray, reachability: np.ndarray, end: Iterable[int]
-) -> int:
-    distances = distance_from(reachability, end)
-    return int(distances[layout == 0].min())
+def solve_part_2(layout: np.ndarray, distances: np.ndarray) -> int:
+    return distances[layout == 0].min()
 
 
 def main():
     text = Path("../inputs/day_12.txt").read_text()
-    layout, start, end = parse_part_1(text)
+    layout, start, end = parse(text)
     options = movement_options(layout)
     reachability = reachable_from(options)
-    print(f"Part 1: {solve_part_1(reachability, start, end)}")
-    print(f"Part 2: {solve_part_2(layout, reachability, end)}")
+    distances_from_end = distance_from(reachability, end)
+    print(f"Part 1: {solve_part_1(distances_from_end, start):.0f}")
+    print(f"Part 2: {solve_part_2(layout, distances_from_end):.0f}")
 
 
 if __name__ == "__main__":
