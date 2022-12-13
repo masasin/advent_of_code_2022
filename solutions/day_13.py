@@ -30,8 +30,7 @@ def is_right_order(left: Packet, right: Packet) -> bool | None:
                 return False
         case list(), list():
             for v1, v2 in zip(left, right):
-                result = is_right_order(v1, v2)
-                if result is None:
+                if (result := is_right_order(v1, v2)) is None:
                     continue
                 return result
             if len(left) < len(right):
