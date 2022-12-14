@@ -62,7 +62,10 @@ def parse_part_1(text: str) -> State:
 
 def get_next_sand_point(state: State) -> Point | None:
     n_rows, n_cols = state.shape
-    prev_point: Point = np.argwhere(state == -1)[0]
+    try:
+        prev_point: Point = np.argwhere(state == -1)[0]
+    except IndexError:
+        return None
     while True:
         for next_movement in [0, -1, 1]:
             next_point = prev_point + [1, next_movement]
@@ -88,18 +91,22 @@ def solve(state: State) -> int:
         state[*next_point] = 2
 
 
-def parse_part_2(text: str) -> Generator:
-    ...
-
-
-def solve_part_2(data: Iterable):
-    ...
+def add_floor(previous_state: State) -> State:
+    n_rows, n_cols = previous_state.shape
+    sand_start_col = np.argwhere(previous_state == -1)[0, 1]
+    full_array = np.zeros((n_rows + 2, 1000))
+    col_offset = SAND_START_COL - sand_start_col
+    full_array[-1] = 1
+    full_array[:-2, col_offset : col_offset + n_cols] = previous_state
+    return full_array
 
 
 def main():
     text = Path("../inputs/day_14.txt").read_text()
-    print(f"Part 1: {solve(parse_part_1(text))}")
-    print(f"Part 2: {solve(parse_part_2(text))}")
+    state = parse_part_1(text)
+    state_with_floor = add_floor(state)
+    print(f"Part 1: {solve(state)}")
+    print(f"Part 2: {solve(state_with_floor)}")
 
 
 if __name__ == "__main__":

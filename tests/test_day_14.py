@@ -11,6 +11,7 @@ from solutions.day_14 import (
     parse_part_1,
     get_next_sand_point,
     solve,
+    add_floor,
 )
 
 
@@ -56,6 +57,14 @@ def initial_state():
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         ]
     )
+
+
+@pytest.fixture
+def initial_state_with_floor(initial_state):
+    full_array = np.zeros((12, 1000))
+    full_array[-1] = 1
+    full_array[:-2, 494:504] = initial_state
+    return full_array
 
 
 @pytest.fixture
@@ -208,9 +217,13 @@ def test_get_next_sand_point(initial_state, n_times, expected):
 @pytest.mark.parametrize(
     ["state", "expected"],
     [
-        (initial_state, 24),
-        (initial_state_with_floor, 93),
+        (pytest.lazy_fixture("initial_state"), 24),
+        (pytest.lazy_fixture("initial_state_with_floor"), 93),
     ],
 )
 def test_solve(state, expected):
-    assert solve(state) == 24
+    assert solve(state) == expected
+
+
+def test_add_floor(initial_state, initial_state_with_floor):
+    assert (add_floor(initial_state) == initial_state_with_floor).all()
