@@ -22,23 +22,14 @@ def parse(text: str) -> Generator[PacketPair, None, None]:
 def is_right_order(left: Packet, right: Packet) -> bool | None:
     match left, right:
         case int(), int():
-            if left < right:
-                return True
-            elif left == right:
-                return None
-            else:
-                return False
+            if left != right:
+                return left < right
         case list(), list():
             for v1, v2 in zip(left, right):
-                if (result := is_right_order(v1, v2)) is None:
-                    continue
-                return result
-            if len(left) < len(right):
-                return True
-            elif len(left) == len(right):
-                return None
-            else:
-                return False
+                if (result := is_right_order(v1, v2)) is not None:
+                    return result
+            if len(left) != len(right):
+                return len(left) < len(right)
         case int(), list():
             return is_right_order([left], right)
         case list(), int():
