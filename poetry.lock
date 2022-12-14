@@ -105,6 +105,24 @@ python-dateutil = ">=2.7"
 setuptools_scm = ">=7"
 
 [[package]]
+name = "nptyping"
+version = "2.4.1"
+description = "Type hints for NumPy."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+numpy = {version = ">=1.20.0,<2.0.0", markers = "python_version >= \"3.8\""}
+
+[package.extras]
+build = ["invoke (>=1.6.0)", "pip-tools (>=6.5.0)"]
+complete = ["pandas", "pandas-stubs-fork"]
+dev = ["autoflake", "beartype (<0.10.0)", "beartype (>=0.10.0)", "black", "codecov (>=2.1.0)", "coverage", "feedparser", "invoke (>=1.6.0)", "isort", "mypy", "pandas", "pandas-stubs-fork", "pip-tools (>=6.5.0)", "pylint", "pyright", "setuptools", "typeguard", "wheel"]
+pandas = ["pandas", "pandas-stubs-fork"]
+qa = ["autoflake", "beartype (<0.10.0)", "beartype (>=0.10.0)", "black", "codecov (>=2.1.0)", "coverage", "feedparser", "isort", "mypy", "pylint", "pyright", "setuptools", "typeguard", "wheel"]
+
+[[package]]
 name = "numpy"
 version = "1.23.5"
 description = "NumPy is the fundamental package for array computing with Python."
@@ -299,7 +317,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "032f72b57c82133fb97e86d5cdf04ddda0720cbc7b61174277e1d052928899ba"
+content-hash = "5ce457ee25fcce33fa63e367a8fc13ff8ecb74b85068ba5ca76e7076954a2619"
 
 [metadata.files]
 attrs = [
@@ -505,6 +523,10 @@ matplotlib = [
     {file = "matplotlib-3.6.2-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b0ca2c60d3966dfd6608f5f8c49b8a0fcf76de6654f2eda55fc6ef038d5a6f27"},
     {file = "matplotlib-3.6.2-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:4426c74761790bff46e3d906c14c7aab727543293eed5a924300a952e1a3a3c1"},
     {file = "matplotlib-3.6.2.tar.gz", hash = "sha256:b03fd10a1709d0101c054883b550f7c4c5e974f751e2680318759af005964990"},
+]
+nptyping = [
+    {file = "nptyping-2.4.1-py3-none-any.whl", hash = "sha256:23e8164b1e2c55e872f392ca7516b9b1b0cb400b03b70accaa63998b4106b0b3"},
+    {file = "nptyping-2.4.1.tar.gz", hash = "sha256:57ba684ee5fc5eb681ee04270ee94adb879e4372ce6b640defa08ace8e1df295"},
 ]
 numpy = [
     {file = "numpy-1.23.5-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:9c88793f78fca17da0145455f0d7826bcb9f37da4764af27ac945488116efe63"},
