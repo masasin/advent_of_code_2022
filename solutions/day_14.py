@@ -94,8 +94,8 @@ def solve(state: State) -> int:
 def add_floor(previous_state: State) -> State:
     n_rows, n_cols = previous_state.shape
     sand_start_col = np.argwhere(previous_state == -1)[0, 1]
-    full_array = np.zeros((n_rows + 2, 1000))
-    col_offset = SAND_START_COL - sand_start_col
+    full_array = np.zeros((n_rows + 2, n_rows * 2 + 5))
+    col_offset = n_rows + 3 - sand_start_col
     full_array[-1] = 1
     full_array[:-2, col_offset : col_offset + n_cols] = previous_state
     return full_array

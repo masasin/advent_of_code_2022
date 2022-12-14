@@ -61,9 +61,9 @@ def initial_state():
 
 @pytest.fixture
 def initial_state_with_floor(initial_state):
-    full_array = np.zeros((12, 1000))
+    full_array = np.zeros((12, 25))
     full_array[-1] = 1
-    full_array[:-2, 494:504] = initial_state
+    full_array[:-2, 7:17] = initial_state
     return full_array
 
 
