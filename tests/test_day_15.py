@@ -1,7 +1,13 @@
 from textwrap import dedent
 import pytest
 
-from solutions.day_15 import parse_part_1, solve_part_1, SensorReading
+from solutions.day_15 import (
+    parse_part_1,
+    solve_part_1,
+    Sensor,
+    ranges_on_row,
+    count_elements,
+)
 
 
 @pytest.fixture
@@ -29,20 +35,20 @@ def text():
 @pytest.fixture
 def data():
     return [
-        SensorReading(2 + 18j, -2 + 15j),
-        SensorReading(9 + 16j, 10 + 16j),
-        SensorReading(13 + 2j, 15 + 3j),
-        SensorReading(12 + 14j, 10 + 16j),
-        SensorReading(10 + 20j, 10 + 16j),
-        SensorReading(14 + 17j, 10 + 16j),
-        SensorReading(8 + 7j, 2 + 10j),
-        SensorReading(2 + 0j, 2 + 10j),
-        SensorReading(0 + 11j, 2 + 10j),
-        SensorReading(20 + 14j, 25 + 17j),
-        SensorReading(17 + 20j, 21 + 22j),
-        SensorReading(16 + 7j, 15 + 3j),
-        SensorReading(14 + 3j, 15 + 3j),
-        SensorReading(20 + 1j, 15 + 3j),
+        Sensor(2 + 18j, -2 + 15j),
+        Sensor(9 + 16j, 10 + 16j),
+        Sensor(13 + 2j, 15 + 3j),
+        Sensor(12 + 14j, 10 + 16j),
+        Sensor(10 + 20j, 10 + 16j),
+        Sensor(14 + 17j, 10 + 16j),
+        Sensor(8 + 7j, 2 + 10j),
+        Sensor(2 + 0j, 2 + 10j),
+        Sensor(0 + 11j, 2 + 10j),
+        Sensor(20 + 14j, 25 + 17j),
+        Sensor(17 + 20j, 21 + 22j),
+        Sensor(16 + 7j, 15 + 3j),
+        Sensor(14 + 3j, 15 + 3j),
+        Sensor(20 + 1j, 15 + 3j),
     ]
 
 
@@ -52,3 +58,38 @@ def test_parse_part_1(text, data):
 
 def test_solve_part_1(data):
     assert solve_part_1(data, 10) == 26
+
+
+@pytest.mark.parametrize(
+    ["sensor", "row", "limits"],
+    [
+        (Sensor(8 + 7j, 2 + 10j), 7, range(-1, 18)),
+        (Sensor(8 + 7j, 2 + 10j), 10, range(2, 15)),
+        (Sensor(8 + 7j, 2 + 10j), 4, range(2, 15)),
+        (Sensor(8 + 7j, 2 + 10j), 20, None),
+    ],
+)
+def test_col_limits_on_row(data, sensor, row, limits):
+    assert sensor.row_range_limits(row) == limits
+
+
+@pytest.mark.parametrize(
+    ["row", "ranges"],
+    [
+        (10, [range(-2, 25)]),
+        (11, [range(-3, 14), range(15, 26)]),
+    ],
+)
+def test_ranges_on_row(data, row, ranges):
+    assert ranges_on_row(data, row) == ranges
+
+
+@pytest.mark.parametrize(
+    ["ranges", "n_elements"],
+    [
+        ([range(-2, 25)], 27),
+        ([range(-3, 14), range(15, 26)], 28),
+    ],
+)
+def test_count_elements(ranges, n_elements):
+    assert count_elements(ranges) == n_elements
