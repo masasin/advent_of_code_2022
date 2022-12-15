@@ -13,10 +13,14 @@ class Sensor(NamedTuple):
     position: Point
     beacon: Point
 
+    @staticmethod
+    def manhattan_distance(point_1: Point, point_2: Point) -> Distance:
+        return int(abs(point_1.real - point_2.real) + abs(point_1.imag - point_2.imag))
+
     @property
     @ft.lru_cache
     def range(self) -> Distance:
-        return manhattan_distance(self.position, self.beacon)
+        return self.manhattan_distance(self.position, self.beacon)
 
     def row_range_limits(self, row) -> range:
         vertical_range = abs(row - self.position.imag)
@@ -28,9 +32,8 @@ class Sensor(NamedTuple):
             int(self.position.real + horizontal_range) + 1,
         )
 
-
-def manhattan_distance(point_1: Point, point_2: Point) -> Distance:
-    return int(abs(point_1.real - point_2.real) + abs(point_1.imag - point_2.imag))
+    def contains(self, point: Point) -> bool:
+        return self.manhattan_distance(point, self.position) <= self.range
 
 
 def parse(text: str) -> Generator[Sensor, None, None]:
@@ -55,10 +58,6 @@ def bounds(data: Iterable[Sensor]) -> tuple[int, int, int, int]:
         max_y = max(max_y, sensor.position.imag + sensor.range)
 
     return int(min_x), int(min_y), int(max_x), int(max_y)
-
-
-def within_range(point: Point, sensor: Sensor) -> bool:
-    return manhattan_distance(point, sensor.position) <= sensor.range
 
 
 def range_overlapping(r1: range, r2: range) -> bool:
