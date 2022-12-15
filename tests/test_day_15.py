@@ -2,11 +2,12 @@ from textwrap import dedent
 import pytest
 
 from solutions.day_15 import (
-    parse_part_1,
+    parse,
     solve_part_1,
     Sensor,
     ranges_on_row,
     count_elements,
+    solve_part_2,
 )
 
 
@@ -52,8 +53,8 @@ def data():
     ]
 
 
-def test_parse_part_1(text, data):
-    assert list(parse_part_1(text)) == data
+def test_parse(text, data):
+    assert list(parse(text)) == data
 
 
 def test_solve_part_1(data):
@@ -93,3 +94,7 @@ def test_ranges_on_row(data, row, ranges):
 )
 def test_count_elements(ranges, n_elements):
     assert count_elements(ranges) == n_elements
+
+
+def test_solve_part_2(data):
+    assert solve_part_2(data, 20) == 56_000_011

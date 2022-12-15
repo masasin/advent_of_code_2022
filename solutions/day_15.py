@@ -33,7 +33,7 @@ def manhattan_distance(point_1: Point, point_2: Point) -> Distance:
     return int(abs(point_1.real - point_2.real) + abs(point_1.imag - point_2.imag))
 
 
-def parse_part_1(text: str) -> Generator[Sensor, None, None]:
+def parse(text: str) -> Generator[Sensor, None, None]:
     pattern = "*x={sensor_x:int}, y={sensor_y:int}*x={beacon_x:int}, y={beacon_y:int}"
     for line in text.splitlines():
         match = sm.match(pattern, line)
@@ -105,19 +105,20 @@ def solve_part_1(data: Iterable[Sensor], row: int) -> int:
     return count_elements(ranges) - n_sensors_on_row - n_beacons_on_row
 
 
-def parse_part_2(text: str) -> Generator:
-    ...
-
-
-def solve_part_2(data: Iterable):
-    ...
+def solve_part_2(data: Iterable[Sensor], max_coord: int) -> int:
+    for row in range(max_coord + 1):
+        ranges = ranges_on_row(data, row)
+        if len(ranges) == 2:
+            break
+    col = ranges[0].stop  # noqa
+    return col * 4_000_000 + row  # noqa
 
 
 def main():
     text = Path("../inputs/day_15.txt").read_text()
-    data = list(parse_part_1(text))
+    data = list(parse(text))
     print(f"Part 1: {solve_part_1(data, row=2_000_000)}")
-    print(f"Part 2: {solve_part_2(parse_part_2(text))}")
+    print(f"Part 2: {solve_part_2(data, max_coord=4_000_000)}")
 
 
 if __name__ == "__main__":
