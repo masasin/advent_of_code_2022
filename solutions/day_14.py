@@ -43,7 +43,7 @@ def get_max_depth(state: State) -> int:
     return int(max(point.imag for point in state))
 
 
-def parse_part_1(text: str) -> State:
+def parse(text: str) -> State:
     state = set()
     for path in parse_paths(text):
         add_path(path, state)
@@ -83,7 +83,7 @@ def solve(state: State, y_offset=0) -> int:
 
 def main():
     text = Path("../inputs/day_14.txt").read_text()
-    state = parse_part_1(text)
+    state = parse(text)
     print(f"Part 1: {solve(state.copy(), y_offset=0)}")
     print(f"Part 2: {solve(state.copy(), y_offset=2)}")
 

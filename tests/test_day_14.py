@@ -6,7 +6,7 @@ from solutions.day_14 import (
     parse_paths,
     add_line,
     add_path,
-    parse_part_1,
+    parse,
     get_next_sand_point,
     solve,
     get_max_depth,
@@ -196,8 +196,8 @@ def test_add_path(path, end_state):
     assert state == end_state
 
 
-def test_parse_part_1(text, initial_state):
-    assert parse_part_1(text) == initial_state
+def test_parse(text, initial_state):
+    assert parse(text) == initial_state
 
 
 @pytest.mark.parametrize(
