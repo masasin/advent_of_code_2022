@@ -35,23 +35,6 @@ class Sensor(NamedTuple):
     def contains(self, point: Point) -> bool:
         return self.manhattan_distance(point, self.position) <= self.range
 
-    def perimeter(self, max_coord: int) -> Generator[Point, None, None]:
-        row = self.position.imag - self.range - 1
-        if 0 <= row <= max_coord:
-            yield self.position.real + row * 1j
-        for row in range(
-            max(int(self.position.imag - self.range), 0),
-            min(int(self.position.imag + self.range) + 1, max_coord + 1),
-        ):
-            limit = self.row_range_limits(row)
-            if 0 <= limit.start - 1 <= max_coord:
-                yield limit.start - 1 + row * 1j
-            if 0 <= limit.stop + 1 <= max_coord:
-                yield limit.stop + row * 1j
-        row = self.position.imag + self.range + 1
-        if 0 <= row <= max_coord:
-            yield self.position.real + row * 1j
-
 
 def parse(text: str) -> Generator[Sensor, None, None]:
     pattern = "*x={sensor_x:int}, y={sensor_y:int}*x={beacon_x:int}, y={beacon_y:int}"
@@ -121,24 +104,18 @@ def solve_part_1(data: Iterable[Sensor], row: int) -> int:
     return count_elements(ranges) - n_sensors_on_row - n_beacons_on_row
 
 
-@ft.lru_cache
-def point_within_some_sensor_range(point: Point, sensors: frozenset[Sensor]) -> bool:
-    for sensor in sensors:
-        if sensor.contains(point):
-            return True
-    return False
-
-
-def solve_part_2(data: frozenset[Sensor], max_coord: int) -> int:
-    for sensor in data:
-        for i, point in enumerate(sensor.perimeter(max_coord), start=1):
-            if not point_within_some_sensor_range(point, data):
-                return int(point.real * 4e6 + point.imag)
+def solve_part_2(data: Iterable[Sensor], max_coord: int) -> int:
+    for row in range(max_coord + 1):
+        ranges = ranges_on_row(data, row)
+        if len(ranges) == 2:
+            break
+    col = ranges[0].stop  # noqa
+    return col * 4_000_000 + row  # noqa
 
 
 def main():
     text = Path("../inputs/day_15.txt").read_text()
-    data = frozenset(parse(text))
+    data = list(parse(text))
     print(f"Part 1: {solve_part_1(data, row=2_000_000)}")
     print(f"Part 2: {solve_part_2(data, max_coord=4_000_000)}")
 
