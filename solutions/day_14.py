@@ -1,112 +1,91 @@
 import itertools as it
 from pathlib import Path
-from typing import Generator, Iterable
+from typing import Generator
 
-import numpy as np
-from numpy.lib.stride_tricks import sliding_window_view
-from nptyping import NDArray, Shape, Int
 
-Point = NDArray[Shape["[x, y]"], Int]
-Points = NDArray[Shape["Point, Point"], Int]
-RockPath = NDArray[Shape["*, Point"], Int]
+Point = complex
+Points = tuple[Point, Point]
+RockPath = list[Point]
 RockPaths = Generator[RockPath, None, None]
-State = NDArray[Shape["*, *"], Int]
+State = set[Point]
 
 
-SAND_START_COL = 500
+SAND_START_POINT = 500 + 0j
 
 
 def parse_paths(text: str) -> RockPaths:
     for path_str in text.splitlines():
-        yield np.array(
-            [
-                [int(v) for v in point.split(",")[::-1]]
-                for point in path_str.split(" -> ")
-            ]
-        )
+        yield [
+            int((p := point.split(","))[0]) + int(p[1]) * 1j
+            for point in path_str.split(" -> ")
+        ]
 
 
-def find_bounds(paths: RockPaths) -> Points:
-    points = np.vstack(paths)
-    # noinspection PyArgumentList
-    return np.array([points.min(axis=0), points.max(axis=0)])
+def add_line(point_1: Point, point_2: Point, state: State) -> None:
+    x1, y1 = int(point_1.real), int(point_1.imag)
+    x2, y2 = int(point_2.real), int(point_2.imag)
+    if x1 == x2:
+        y_start, y_end = sorted([y1, y2])
+        for y in range(y_start, y_end + 1):
+            state.add(x1 + y * 1j)
+    else:
+        x_start, x_end = sorted([x1, x2])
+        for x in range(x_start, x_end + 1):
+            state.add(x + y1 * 1j)
 
 
-def draw_line(endpoints: Points, state: State) -> None:
-    endpoints = endpoints.copy()
-    endpoints.sort(axis=0)
-    ((row_start, col_start), (row_end, col_end)) = endpoints
-    state[row_start : row_end + 1, col_start : col_end + 1] = 1
+def add_path(path, state) -> None:
+    for point_1, point_2 in zip(path, path[1:]):
+        add_line(point_1, point_2, state)
 
 
-def draw_path(path, state) -> None:
-    for endpoints in sliding_window_view(path, window_shape=[2, 2]):
-        draw_line(endpoints[0], state)
+def get_max_depth(state: State) -> int:
+    return int(max(point.imag for point in state))
 
 
 def parse_part_1(text: str) -> State:
-    paths = list(parse_paths(text))
-    min_point, max_point = find_bounds(paths)
-    size = np.array([max_point[0], max_point[1] - min_point[1]]) + 1
-    state = np.zeros(size)
-
-    col_offset = min_point[1]
-    state[0, SAND_START_COL - col_offset] = -1
-
-    for path in paths:
-        path[:, 1] -= col_offset
-        draw_path(path, state)
-
+    state = set()
+    for path in parse_paths(text):
+        add_path(path, state)
     return state
 
 
-def get_next_sand_point(state: State) -> Point | None:
-    n_rows, n_cols = state.shape
-    try:
-        prev_point: Point = np.argwhere(state == -1)[0]
-    except IndexError:
-        return None
-    while True:
-        for next_movement in [0, -1, 1]:
-            next_point = prev_point + [1, next_movement]
-            next_row, next_col = next_point
-            if not (0 <= next_col < n_cols):
-                return None
-            if state[*next_point] == 0:
-                prev_point = next_point
+def get_next_sand_point(state: State, y_max: int) -> Point | None:
+    position = SAND_START_POINT
+    while position.imag < y_max and SAND_START_POINT not in state:
+        for movement in [1j, -1 + 1j, 1 + 1j]:
+            if position + movement not in state:
+                position += movement
                 break
         else:
-            next_point = prev_point
-            break
-    if state[*next_point] > 0:
-        return None
-    return next_point
+            return position
 
 
-def solve(state: State) -> int:
+def add_floor(state: State, y_max: int) -> None:
+    sand_start_x = int(SAND_START_POINT.real)
+    add_line(
+        sand_start_x - y_max + y_max * 1j,
+        sand_start_x + y_max + y_max * 1j,
+        state,
+    )
+
+
+def solve(state: State, y_offset=0) -> int:
+    y_max = get_max_depth(state) + y_offset
+    if y_offset:
+        add_floor(state, y_max)
     for i in it.count():
-        next_point = get_next_sand_point(state)
+        next_point = get_next_sand_point(state, y_max)
         if next_point is None:
             return i
-        state[*next_point] = 2
-
-
-def add_floor(previous_state: State) -> State:
-    n_rows, n_cols = previous_state.shape
-    sand_start_col = np.argwhere(previous_state == -1)[0, 1]
-    full_array = np.zeros((n_rows + 2, n_rows * 2 + 5))
-    col_offset = n_rows + 3 - sand_start_col
-    full_array[-1] = 1
-    full_array[:-2, col_offset : col_offset + n_cols] = previous_state
-    return full_array
+        state.add(next_point)
 
 
 def main():
     text = Path("../inputs/day_14.txt").read_text()
     state = parse_part_1(text)
-    state_with_floor = add_floor(state)
-    print(f"Part 1: {solve(state)}")
-    print(f"Part 2: {solve(state_with_floor)}")
+    print(f"Part 1: {solve(state.copy(), y_offset=0)}")
+    print(f"Part 2: {solve(state.copy(), y_offset=2)}")
 
 
 if __name__ == "__main__":
